@@ -1,0 +1,514 @@
+<meta charset="utf-8">
+<title>Lebrument Case Closed</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one fixed 16:9 night-purple stage, scaled to fit, matching the intro video (labels top, caption bar bottom). Single dark look on purpose. */
+:root{
+  --night:#0c0210;
+  --plum:#2a0a45;
+  --violet:#7b3fd0;
+  --lav:#c9a8f2;
+  --ink:#f3ecff;
+  --card:#1c0a30;
+  --blood:#ff3b5c;
+  --gold:#ffcf4a;
+  --green:#1f5a3c;
+  --display:"Poppins",system-ui,sans-serif;
+  --body:"Inter",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--body);overflow:hidden;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+#wrap{position:fixed;inset:0;display:grid;place-items:center}
+#stage{width:1280px;height:720px;position:relative;flex:none;transform-origin:center;
+  background:radial-gradient(ellipse 70% 75% at 50% 55%,#3a0f63 0%,var(--plum) 35%,#14041f 75%,var(--night) 100%);
+  overflow:hidden;border-radius:6px;box-shadow:0 0 0 1px #ffffff10}
+.stars{position:absolute;inset:0;pointer-events:none}
+.stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--lav);opacity:.35;animation:tw 4s ease-in-out infinite}
+@keyframes tw{50%{opacity:.08}}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .6s ease,visibility 0s .6s}
+.slide.active{opacity:1;visibility:visible;transition:opacity .6s ease}
+.tag{position:absolute;top:34px;left:50%;transform:translateX(-50%);font:600 22px/1 var(--display);letter-spacing:.08em;color:var(--lav);text-transform:uppercase;white-space:nowrap}
+.tag.box{left:40px;transform:none;font-size:14px;border:1.5px solid var(--violet);border-radius:6px;padding:7px 12px;background:#1a0830cc}
+.caps{position:absolute;left:90px;right:90px;bottom:30px;min-height:76px;border:1.5px solid var(--violet);border-radius:14px;background:#0c0414e6;display:grid;place-items:center;padding:10px 24px}
+.cap{grid-area:1/1;font:500 25px/1.35 var(--body);text-align:center;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;text-wrap:balance}
+.cap.show{opacity:1;transform:none}
+
+/* step reveals */
+[data-s]{transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1),filter .55s}
+.slide [data-s]:not(.cap):not(.on){opacity:0;transform:translateY(18px) scale(.97)}
+.pop[data-s]:not(.on){transform:translate(-50%,-50%) scale(2.2) rotate(-12deg)!important}
+
+/* ---------- 0 title ---------- */
+.timer{position:absolute;top:110px;left:50%;transform:translateX(-50%);border:2px solid var(--blood);border-radius:12px;padding:10px 34px 14px;text-align:center;background:#12030ccc}
+.timer small{display:block;font:600 13px var(--display);letter-spacing:.12em;color:#ffb3c0}
+.timer b{font:700 64px/1 var(--display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.timer.zero b{color:var(--blood);animation:blink .8s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.big3{position:absolute;top:300px;left:0;right:0;display:flex;justify-content:center;gap:56px}
+.big3 div{font:800 96px/1 var(--display);text-align:center}
+.big3 div::after{content:"";display:block;margin:18px auto 0;width:110px;height:6px;border-radius:3px;background:var(--violet)}
+.big3 div:nth-child(2)::after{background:var(--blood)}
+.big3 div:nth-child(3)::after{background:var(--gold)}
+.mag{position:absolute;right:120px;top:120px;width:90px;height:90px;border:8px solid var(--lav);border-radius:50%;animation:hover 3s ease-in-out infinite}
+.mag::after{content:"";position:absolute;width:12px;height:56px;background:var(--lav);border-radius:6px;right:-34px;bottom:-56px;transform:rotate(-45deg)}
+@keyframes hover{50%{transform:translate(-14px,10px)}}
+
+/* ---------- suspect cards ---------- */
+.row{position:absolute;top:110px;left:0;right:0;display:flex;justify-content:center;gap:26px}
+.sus{width:196px;height:300px;border:2px solid var(--violet);border-radius:16px;background:linear-gradient(#24103d,#170827);position:relative;display:flex;flex-direction:column;align-items:center;padding-top:22px;transition:filter .6s,opacity .6s,border-color .6s,box-shadow .6s,transform .6s}
+.who{position:relative;width:120px;height:150px}
+.who::before{content:"";position:absolute;left:50%;top:0;width:62px;height:62px;margin-left:-31px;border-radius:50%;background:#e9c9b0}
+.who::after{content:"";position:absolute;left:50%;bottom:0;width:120px;height:82px;margin-left:-60px;border-radius:40px 40px 14px 14px;background:var(--c)}
+.who i{position:absolute;left:50%;top:-6px;width:68px;height:34px;margin-left:-34px;border-radius:34px 34px 6px 6px;background:var(--h);z-index:1}
+.sus h3{margin:14px 0 2px;font:700 26px/1 var(--display)}
+.sus p{margin:0 12px;font:500 14px/1.3 var(--body);color:var(--lav);text-align:center}
+.stamp{position:absolute;left:50%;top:44%;font:800 26px/1 var(--display);letter-spacing:.06em;padding:8px 14px;border:4px solid currentColor;border-radius:8px;transform:translate(-50%,-50%) rotate(-12deg);background:#0c0414cc;white-space:nowrap}
+.stamp.ok{color:#5fe39b}
+.stamp.bad{color:var(--blood)}
+.proof{position:absolute;left:8px;right:8px;bottom:10px;font:600 13px/1.3 var(--body);color:var(--gold);text-align:center}
+.sus.cleared{filter:grayscale(.8) brightness(.55)}
+.sus.hot{border-color:var(--blood);box-shadow:0 0 0 4px #ff3b5c33,0 0 60px #ff3b5c66;transform:translateY(-6px)}
+.under{position:absolute;top:452px;left:0;right:0;text-align:center;font:800 44px/1.1 var(--display)}
+.under em{font-style:normal;color:var(--blood)}
+
+/* ---------- reveal ---------- */
+.reveal-wrap{position:absolute;top:96px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:70px}
+.flip{width:300px;height:420px;perspective:1200px}
+.flip .inner{position:relative;width:100%;height:100%;transition:transform 1.1s cubic-bezier(.5,0,.2,1);transform-style:preserve-3d}
+.flip.turned .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--violet);background:linear-gradient(#24103d,#170827)}
+.face.back{transform:rotateY(180deg);border-color:var(--blood);box-shadow:0 0 90px #ff3b5c77}
+.qm{width:110px;height:110px;border-radius:50%;background:#08020c;display:grid;place-items:center;font:800 70px var(--display);color:var(--lav)}
+.face.back .who{transform:scale(1.5);margin-bottom:46px}
+.face.back h2{margin:0;font:800 44px/1 var(--display);color:var(--blood)}
+.face.back p{margin:8px 0 0;font:600 16px var(--body);color:var(--lav)}
+.reveal-txt{width:420px}
+.reveal-txt .k{font:700 30px/1.2 var(--display);color:var(--lav)}
+.reveal-txt .n{font:800 84px/1 var(--display);color:var(--blood);margin-top:10px}
+.reveal-txt ul{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:10px;font:500 21px/1.3 var(--body)}
+.reveal-txt li b{color:var(--gold);font-weight:600}
+
+/* ---------- lies ---------- */
+.lies{position:absolute;top:100px;left:80px;right:80px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.lie{border:2px solid var(--violet);border-radius:18px;background:#1a0830d9;padding:26px 28px;position:relative}
+.lie .said{font:600 14px var(--display);letter-spacing:.1em;color:var(--lav)}
+.lie q{display:block;margin:10px 0 22px;font:700 30px/1.25 var(--display);quotes:"\201C" "\201D"}
+.lie .truth{border-top:1.5px dashed #ffffff30;padding-top:18px;font:500 21px/1.4 var(--body)}
+.lie .truth b{color:var(--gold)}
+.lie .stamp{top:auto;bottom:-6px;left:auto;right:-14px;transform:rotate(-10deg);font-size:30px}
+.lie .stamp:not(.on){transform:scale(2.2) rotate(-10deg)!important}
+
+/* ---------- why ---------- */
+.why{position:absolute;top:104px;left:70px;right:70px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.doc{background:#f4eefc;color:#1d0f2e;border-radius:10px;padding:22px 22px 18px;position:relative;box-shadow:0 18px 40px #00000080;min-height:270px}
+.doc .h{font:700 13px var(--display);letter-spacing:.1em;color:#6a3fb0}
+.doc .t{font:700 22px/1.2 var(--display);margin:8px 0 12px}
+.doc p{margin:0;font:500 16px/1.4 var(--body)}
+.doc .amt{font:800 34px/1 var(--display);color:#c1123a;margin:14px 0 6px;font-variant-numeric:tabular-nums}
+.doc .from{position:absolute;left:22px;bottom:16px;font:600 13px var(--body);color:#6a3fb0}
+.doc .st{position:absolute;right:14px;bottom:44px;transform:rotate(-14deg);color:#c1123a;border:3px solid #c1123a;border-radius:6px;padding:4px 8px;font:800 14px var(--display);letter-spacing:.06em}
+.why-note{position:absolute;top:452px;left:0;right:0;text-align:center;font:600 22px var(--body);color:var(--lav)}
+
+/* ---------- timeline ---------- */
+.tl{position:absolute;top:140px;left:80px;right:80px;height:420px}
+.tl .line{position:absolute;top:150px;left:0;right:0;height:4px;background:#ffffff22;border-radius:2px}
+.tl .fill{position:absolute;top:150px;left:0;height:4px;background:linear-gradient(90deg,var(--violet),var(--blood));border-radius:2px;width:0;transition:width .7s ease}
+.ev{position:absolute;width:170px;margin-left:-85px;text-align:center}
+.ev .dot{position:absolute;left:50%;top:142px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--lav);box-shadow:0 0 0 5px #7b3fd055}
+.ev.red .dot{background:var(--blood);box-shadow:0 0 0 6px #ff3b5c55}
+.ev time{display:block;font:800 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.ev.red time{color:var(--blood)}
+.ev .lbl{font:500 16px/1.35 var(--body);color:var(--ink)}
+.ev.up time{position:absolute;top:96px;left:0;right:0}
+.ev.up .lbl{position:absolute;top:0;left:0;right:0}
+.ev.dn time{position:absolute;top:184px;left:0;right:0}
+.ev.dn .lbl{position:absolute;top:226px;left:0;right:0}
+
+/* ---------- weapon ---------- */
+.weap{position:absolute;top:96px;left:60px;right:60px;display:grid;grid-template-columns:repeat(3,1fr);gap:34px;align-items:end}
+.wcol{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.wcol h4{margin:0;font:700 24px/1.2 var(--display)}
+.wcol p{margin:0;font:500 18px/1.4 var(--body);color:var(--lav);max-width:330px}
+.wcol p b{color:var(--gold);font-weight:600}
+.cup{position:relative;width:120px;height:140px;margin-top:40px}
+.cup .body{position:absolute;inset:0;background:#f4f0fa;clip-path:polygon(0 0,100% 0,86% 100%,14% 100%);border-radius:4px}
+.cup .coffee{position:absolute;left:4px;right:4px;top:0;height:18px;border-radius:50%;background:#3b1d0e}
+.cup .lip{position:absolute;top:-4px;left:58%;width:30px;height:12px;border-radius:50% 50% 40% 40%;background:#7a1028;transform:rotate(8deg)}
+.cup .steam{position:absolute;left:50%;top:-40px;width:4px;height:30px;border-radius:2px;background:#ffffff70;animation:steam 2s ease-in-out infinite}
+.cup .steam:nth-child(4){left:35%;animation-delay:.6s}
+.cup .steam:nth-child(5){left:65%;animation-delay:1.2s}
+@keyframes steam{0%{opacity:0;transform:translateY(10px)}50%{opacity:1}100%{opacity:0;transform:translateY(-16px)}}
+.chip{display:inline-block;font:700 15px var(--display);letter-spacing:.06em;padding:6px 12px;border-radius:6px;border:2px solid var(--blood);color:var(--blood)}
+.swatches{display:flex;gap:26px;margin-top:40px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:8px;font:600 15px var(--body)}
+.sw span{width:74px;height:74px;border-radius:50%;border:3px solid #ffffff30}
+.sw.match span{border-color:var(--gold);box-shadow:0 0 30px #ffcf4a88}
+.blister{width:150px;height:100px;border-radius:12px;background:linear-gradient(135deg,#d9d9e6,#a9a9bd);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px;margin-top:44px;box-sizing:border-box}
+.blister i{border-radius:50%;background:#7f7f95;box-shadow:inset 0 2px 4px #0006}
+
+/* ---------- false leads ---------- */
+.leads{position:absolute;top:100px;left:70px;right:70px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.lead{border:2px solid #ffffff25;border-radius:16px;background:#160825d9;padding:22px 20px;display:flex;flex-direction:column;gap:10px;min-height:300px}
+.lead h4{margin:0;font:700 26px var(--display)}
+.lead .s{font:600 15px/1.35 var(--body);color:#ffb3c0}
+.lead .t{font:500 16px/1.4 var(--body);color:var(--ink)}
+.lead .t b{color:#5fe39b;font-weight:600}
+
+/* ---------- closed ---------- */
+.closed{position:absolute;top:120px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:28px}
+.tape{position:absolute;left:-40px;right:-40px;top:64px;height:46px;background:repeating-linear-gradient(-45deg,var(--gold) 0 34px,#111 34px 68px);transform:rotate(-3deg);opacity:.9}
+.big-stamp{font:800 96px/1 var(--display);color:var(--blood);border:8px solid var(--blood);border-radius:16px;padding:14px 36px;transform:rotate(-6deg);background:#0c0414e6;margin-top:70px}
+.big-stamp:not(.on){transform:scale(2.6) rotate(-6deg)!important}
+.summary{display:flex;gap:22px}
+.summary div{border:1.5px solid var(--violet);border-radius:12px;padding:14px 22px;background:#1a0830d9;text-align:center;min-width:220px}
+.summary small{display:block;font:600 13px var(--display);letter-spacing:.1em;color:var(--lav)}
+.summary b{font:700 24px/1.3 var(--display)}
+
+/* ---------- chrome ---------- */
+#ui{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center;opacity:.35;transition:opacity .3s;z-index:5}
+#ui:hover,#ui:focus-within{opacity:1}
+#ui button{font:600 13px var(--body);color:var(--ink);background:#2a0a45;border:1px solid var(--violet);border-radius:8px;padding:8px 12px;cursor:pointer}
+#ui button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#count{font:600 13px var(--body);color:var(--lav);font-variant-numeric:tabular-nums;min-width:48px;text-align:center}
+#bar{position:absolute;left:0;bottom:0;height:4px;background:var(--violet);transition:width .4s}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01s!important}
+}
+</style>
+
+<div id="wrap"><div id="stage">
+  <div class="stars" id="stars"></div>
+
+  <!-- 0 · TIME'S UP -->
+  <section class="slide" data-steps="1">
+    <div class="timer" id="timer"><small>TIME LEFT</small><b id="tval">00:05</b></div>
+    <div class="mag"></div>
+    <div class="big3" data-s="1"><div>WHO?</div><div>HOW?</div><div>WHY?</div></div>
+    <div class="caps">
+      <p class="cap" data-s="0">Pens down, detectives. Your time is up.</p>
+      <p class="cap" data-s="1">Let's find out who killed Professor Lebrument, how, and why.</p>
+    </div>
+  </section>
+
+  <!-- 1 · ALIBIS -->
+  <section class="slide" data-steps="5">
+    <div class="tag">Five suspects · four alibis</div>
+    <div class="row">
+      <div class="sus" id="c-anna"><div class="who" style="--c:#8a8a96;--h:#4a2c1c"><i></i></div><h3>Anna</h3><p>Administrative manager</p>
+        <div class="stamp ok pop" data-s="1">ALIBI</div><div class="proof" data-s="1">Tram ticket · 7:52 p.m.</div></div>
+      <div class="sus" id="c-polina"><div class="who" style="--c:#1f2f5c;--h:#d9b36a"><i></i></div><h3>Polina</h3><p>CEO of Atos, sponsor</p>
+        <div class="stamp ok pop" data-s="2">ALIBI</div><div class="proof" data-s="2">Dinner with the Dean · 7:58–10:12</div></div>
+      <div class="sus" id="c-amel"><div class="who" style="--c:#5b4a7a;--h:#2b1a12"><i></i></div><h3>Amel</h3><p>PhD student, assistant</p>
+        <div class="stamp ok pop" data-s="3">ALIBI</div><div class="proof" data-s="3">Library loan · 8:05 p.m.</div></div>
+      <div class="sus" id="c-joyce"><div class="who" style="--c:#e8b923;--h:#6b3a1f"><i></i></div><h3>Joyce</h3><p>Master's student, intern</p>
+        <div class="stamp ok pop" data-s="4">ALIBI</div><div class="proof" data-s="4">Left B204 at 8:12 · victim alive</div></div>
+      <div class="sus" id="c-ines"><div class="who" style="--c:var(--green);--h:#1a0f0a"><i></i></div><h3>Ines</h3><p>Head of the Finance Dept.</p>
+        <div class="stamp bad pop" data-s="5">NO ALIBI</div><div class="proof" data-s="5" style="color:var(--blood)">Badge exit · 8:46 p.m.</div></div>
+    </div>
+    <div class="under" data-s="5">4 INNOCENT · <em>1 KILLER</em></div>
+    <div class="caps">
+      <p class="cap" data-s="0">Each suspect said where they were. Let's check every alibi.</p>
+      <p class="cap" data-s="1">Anna left at 7:35. Her tram ticket says 7:52 p.m. She was gone.</p>
+      <p class="cap" data-s="2">Polina was having dinner with the Dean from 7:58 to 10:12 p.m. The restaurant receipt proves it.</p>
+      <p class="cap" data-s="3">Amel borrowed books at the library at 8:05 p.m. and stayed until 8:50.</p>
+      <p class="cap" data-s="4">Joyce lied about the computer lab, but she left Lebrument at 8:12. He was alive, waiting for "someone at 8:15".</p>
+      <p class="cap" data-s="5">Only one person has no alibi. Her badge shows she left the building at 8:46 p.m.</p>
+    </div>
+  </section>
+
+  <!-- 2 · REVEAL -->
+  <section class="slide" data-steps="2">
+    <div class="tag">The killer is…</div>
+    <div class="reveal-wrap">
+      <div class="flip" id="flip"><div class="inner">
+        <div class="face"><div class="qm">?</div></div>
+        <div class="face back"><div class="who" style="--c:var(--green);--h:#1a0f0a"><i></i></div><h2>DR INES</h2><p>Head of the Finance Department</p></div>
+      </div></div>
+      <div class="reveal-txt" data-s="2">
+        <div class="k">The killer is</div>
+        <div class="n">Dr Ines</div>
+        <ul>
+          <li><b>Who:</b> Head of the Finance Department</li>
+          <li><b>Weapon:</b> a sedative in a cup of coffee</li>
+          <li><b>Motive:</b> €48,000 stolen from the school</li>
+        </ul>
+      </div>
+    </div>
+    <div class="caps">
+      <p class="cap" data-s="0">Four innocent. One killer. Who is it?</p>
+      <p class="cap" data-s="1">It was Dr Ines.</p>
+      <p class="cap" data-s="2">She poisoned Professor Lebrument to protect her secret.</p>
+    </div>
+  </section>
+
+  <!-- 3 · LIES -->
+  <section class="slide" data-steps="2">
+    <div class="tag">Her two lies</div>
+    <div class="lies">
+      <div class="lie" data-s="1">
+        <div class="said">LIE #1 · SHE SAID</div>
+        <q>I left at 7:45 and went straight home.</q>
+        <div class="truth">Anna's <b>badge record</b> shows she left the building at <b>8:46 p.m.</b>, 20 minutes after the murder.</div>
+        <div class="stamp bad" data-s="1">LIE</div>
+      </div>
+      <div class="lie" data-s="2">
+        <div class="said">LIE #2 · SHE SAID</div>
+        <q>I never use the staff lounge machine.</q>
+        <div class="truth">At 7:55, <b>Amel</b> saw someone in a <b>dark green blazer</b> press the coffee machine twice. Two cups.</div>
+        <div class="stamp bad" data-s="2">LIE</div>
+      </div>
+    </div>
+    <div class="caps">
+      <p class="cap" data-s="0">Dr Ines lied to you twice.</p>
+      <p class="cap" data-s="1">She was still in the building during the murder.</p>
+      <p class="cap" data-s="2">And she was the one who made the two coffees.</p>
+    </div>
+  </section>
+
+  <!-- 4 · WHY -->
+  <section class="slide" data-steps="4">
+    <div class="tag">Why · the money trail</div>
+    <div class="why">
+      <div class="doc" data-s="1">
+        <div class="h">INVOICE · PHOTOCOPY</div>
+        <div class="t">EduConsult</div>
+        <p>A supplier that <b>does not exist</b>. Ines created it.</p>
+        <div class="st">FINANCE DEPT.</div>
+        <div class="from">Found with Anna</div>
+      </div>
+      <div class="doc" data-s="2">
+        <div class="h">TRANSFER ORDER</div>
+        <div class="t">Paid to EduConsult</div>
+        <p>Instructions sent by email from the <b>“Finance Department Head”</b>.</p>
+        <div class="amt"><span id="money">€0</span></div>
+        <div class="from">Found with Polina</div>
+      </div>
+      <div class="doc" data-s="3">
+        <div class="h">BANK LETTER · FINAL NOTICE</div>
+        <div class="t">Dr Ines is in debt</div>
+        <p>Total amount due:</p>
+        <div class="amt">€52,380</div>
+        <div class="from">Found in Ines's bag</div>
+      </div>
+    </div>
+    <div class="why-note" data-s="4">The Dean job was only the apparent motive. The real reason was the money.</div>
+    <div class="caps">
+      <p class="cap" data-s="0">Why would the Head of Finance kill?</p>
+      <p class="cap" data-s="1">She created a fake supplier called EduConsult. The invoices carry the Finance Dept. stamp.</p>
+      <p class="cap" data-s="2">She stole €48,000 from the Entrepreneurship Chair budget.</p>
+      <p class="cap" data-s="3">She needed the money: the bank was asking her for more than €52,000.</p>
+      <p class="cap" data-s="4">Lebrument found out. He gave the thief one chance to explain, tonight at 8:15.</p>
+    </div>
+  </section>
+
+  <!-- 5 · HOW · TIMELINE -->
+  <section class="slide" data-steps="6">
+    <div class="tag">How · Thursday night</div>
+    <div class="tl">
+      <div class="line"></div><div class="fill" id="fill"></div>
+      <div class="ev up" style="left:4%" data-s="1"><time>7:42</time><div class="dot"></div><div class="lbl">Lebrument emails the Dean and sets a meeting for <b>8:15</b></div></div>
+      <div class="ev dn" style="left:22%" data-s="2"><div class="dot"></div><time>7:55</time><div class="lbl">Ines gets <b>two coffees</b>. Amel sees her from behind</div></div>
+      <div class="ev up" style="left:40%" data-s="3"><time>8:12</time><div class="dot"></div><div class="lbl">Joyce leaves B204. Lebrument is <b>alive</b></div></div>
+      <div class="ev dn red" style="left:58%" data-s="4"><div class="dot"></div><time>8:15</time><div class="lbl">Ines enters B204 with the two cups</div></div>
+      <div class="ev up red" style="left:76%" data-s="5"><time>~8:25</time><div class="dot"></div><div class="lbl">Lebrument drinks the drugged coffee and dies</div></div>
+      <div class="ev dn red" style="left:96%" data-s="6"><div class="dot"></div><time>8:46</time><div class="lbl">Ines leaves the building. <b>Her badge records it</b></div></div>
+    </div>
+    <div class="caps">
+      <p class="cap" data-s="0">Here is exactly what happened that night.</p>
+      <p class="cap" data-s="1">At 7:42, Lebrument writes to the Dean: he will confront the thief at 8:15.</p>
+      <p class="cap" data-s="2">At 7:55, Ines takes two coffees at the staff lounge machine.</p>
+      <p class="cap" data-s="3">At 8:12, Joyce leaves the office. The Professor is alive and alone.</p>
+      <p class="cap" data-s="4">At 8:15, Ines arrives with the two coffees. Only one contains the sedative.</p>
+      <p class="cap" data-s="5">Around 8:25, Lebrument is dead.</p>
+      <p class="cap" data-s="6">At 8:46, she leaves. The guard finds the body at 9:20.</p>
+    </div>
+  </section>
+
+  <!-- 6 · WEAPON -->
+  <section class="slide" data-steps="3">
+    <div class="tag">The evidence</div>
+    <div class="weap">
+      <div class="wcol" data-s="1">
+        <div class="cup"><div class="body"></div><div class="coffee"></div><i class="steam"></i><i class="steam"></i><i class="steam"></i></div>
+        <span class="chip">CUP #1 · SEDATIVE</span>
+        <h4>Next to the body</h4>
+        <p>The coffee Ines gave the Professor.</p>
+      </div>
+      <div class="wcol" data-s="2">
+        <div class="swatches">
+          <div class="sw"><span style="background:#ff1f3d"></span>Polina<br>bright red</div>
+          <div class="sw match"><span style="background:#7a1028"></span>Ines<br>dark red</div>
+        </div>
+        <h4>Cup #2, in the bin</h4>
+        <p>A <b>dark red</b> lipstick mark. Polina's lipstick is bright red. It matches <b>Ines</b>.</p>
+      </div>
+      <div class="wcol" data-s="3">
+        <div class="blister"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="chip">EMPTY · DR INES</span>
+        <h4>In her bag</h4>
+        <p>An <b>empty pack of sleeping pills</b> with her name on it.</p>
+      </div>
+    </div>
+    <div class="caps">
+      <p class="cap" data-s="0">The clues were all there.</p>
+      <p class="cap" data-s="1">Cup number one: coffee with a strong sedative.</p>
+      <p class="cap" data-s="2">Cup number two: her own, with her dark red lipstick on the rim.</p>
+      <p class="cap" data-s="3">And in her bag: the empty sleeping pills. Did you search it?</p>
+    </div>
+  </section>
+
+  <!-- 7 · FALSE LEADS -->
+  <section class="slide" data-steps="1">
+    <div class="tag">The false leads</div>
+    <div class="leads" data-s="1">
+      <div class="lead"><h4>Anna</h4><div class="s">Argued with Lebrument on Wednesday.</div><div class="t">He was asking her for the EduConsult invoices. She was <b>afraid of being accused</b>.</div></div>
+      <div class="lead"><h4>Polina</h4><div class="s">Threatened to stop the sponsorship.</div><div class="t">True, but she was <b>at dinner with the Dean</b> all evening.</div></div>
+      <div class="lead"><h4>Amel</h4><div class="s">Hated him: he caught plagiarism in her thesis.</div><div class="t">She had the strongest hatred, but she was <b>in the library</b>.</div></div>
+      <div class="lead"><h4>Joyce</h4><div class="s">Lied about the computer lab.</div><div class="t">She went to beg him not to accuse her of cheating. She <b>typed documents for Ines</b> without reading them.</div></div>
+    </div>
+    <div class="caps">
+      <p class="cap" data-s="0">Everyone had a secret.</p>
+      <p class="cap" data-s="1">But a secret is not a murder. Four of them were innocent.</p>
+    </div>
+  </section>
+
+  <!-- 8 · CLOSED -->
+  <section class="slide" data-steps="2">
+    <div class="tape"></div>
+    <div class="closed">
+      <div class="big-stamp" data-s="1">CASE CLOSED</div>
+      <div class="summary" data-s="2">
+        <div><small>KILLER</small><b>Dr Ines</b></div>
+        <div><small>MOTIVE</small><b>€48,000 fraud</b></div>
+        <div><small>WEAPON</small><b>Sedative in coffee</b></div>
+      </div>
+    </div>
+    <div class="caps">
+      <p class="cap" data-s="0">Professor Lebrument knew who. Now, so do you.</p>
+      <p class="cap" data-s="1">Dr Ines is under arrest.</p>
+      <p class="cap" data-s="2">Which team found the killer? Thank you for playing, detectives!</p>
+    </div>
+  </section>
+
+  <div id="bar"></div>
+</div></div>
+
+<div id="ui">
+  <button id="prev" type="button" aria-label="Previous">←</button>
+  <span id="count">1 / 9</span>
+  <button id="next" type="button" aria-label="Next">→</button>
+  <button id="fs" type="button">Full screen</button>
+</div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  let cur = 0, step = 0, timerId = null, moneyId = null;
+
+  // stars
+  const st = document.getElementById('stars');
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('i');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = (Math.random() * 4) + 's';
+    if (Math.random() < .3) { s.style.width = s.style.height = '2px'; }
+    st.appendChild(s);
+  }
+
+  function fit() {
+    const k = Math.min(innerWidth / 1280, innerHeight / 720);
+    stage.style.transform = `scale(${k})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+    const s = slides[cur];
+    s.querySelectorAll('[data-s]').forEach(el => {
+      const n = +el.dataset.s;
+      if (el.classList.contains('cap')) return;
+      el.classList.toggle('on', n <= step);
+    });
+    const caps = [...s.querySelectorAll('.cap')];
+    let best = null;
+    caps.forEach(c => { if (+c.dataset.s <= step) best = c; });
+    caps.forEach(c => c.classList.toggle('show', c === best));
+    hooks();
+    document.getElementById('count').textContent = `${cur + 1} / ${slides.length}`;
+    const total = slides.reduce((a, x) => a + (+x.dataset.steps) + 1, 0);
+    const done = slides.slice(0, cur).reduce((a, x) => a + (+x.dataset.steps) + 1, 0) + step + 1;
+    document.getElementById('bar').style.width = (done / total * 100) + '%';
+  }
+
+  function hooks() {
+    // slide 0: countdown
+    const t = document.getElementById('timer'), tv = document.getElementById('tval');
+    clearInterval(timerId);
+    if (cur === 0) {
+      let n = 5; tv.textContent = '00:05'; t.classList.remove('zero');
+      timerId = setInterval(() => {
+        n--; tv.textContent = '00:0' + Math.max(n, 0);
+        if (n <= 0) { clearInterval(timerId); t.classList.add('zero'); }
+      }, 700);
+    }
+    // slide 1: dim cleared suspects, highlight Ines
+    ['anna', 'polina', 'amel', 'joyce'].forEach((id, i) =>
+      document.getElementById('c-' + id).classList.toggle('cleared', cur === 1 && step >= i + 1));
+    document.getElementById('c-ines').classList.toggle('hot', cur === 1 && step >= 5);
+    // slide 2: flip
+    document.getElementById('flip').classList.toggle('turned', cur === 2 && step >= 1);
+    // slide 4: money counter
+    const m = document.getElementById('money');
+    if (cur === 4 && step >= 2) {
+      if (m.dataset.done !== '1') {
+        let v = 0; m.dataset.done = '1';
+        moneyId = setInterval(() => {
+          v = Math.min(48000, v + 1200);
+          m.textContent = '€' + v.toLocaleString('en-US');
+          if (v >= 48000) clearInterval(moneyId);
+        }, 25);
+      }
+    } else { clearInterval(moneyId); m.textContent = '€0'; m.dataset.done = '0'; }
+    // slide 5: timeline fill
+    const stops = [0, 4, 22, 40, 58, 76, 100];
+    document.getElementById('fill').style.width = (cur === 5 ? stops[step] : 0) + '%';
+  }
+
+  function next() {
+    if (step < +slides[cur].dataset.steps) step++;
+    else if (cur < slides.length - 1) { cur++; step = 0; }
+    render();
+  }
+  function prev() {
+    if (step > 0) step--;
+    else if (cur > 0) { cur--; step = +slides[cur].dataset.steps; }
+    render();
+  }
+
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'f' || e.key === 'F') toggleFs();
+  });
+  stage.addEventListener('click', next);
+  document.getElementById('next').addEventListener('click', next);
+  document.getElementById('prev').addEventListener('click', prev);
+  function toggleFs() {
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen().catch(() => {});
+    } catch (e) {}
+  }
+  document.getElementById('fs').addEventListener('click', toggleFs);
+
+  render();
+})();
+</script>
